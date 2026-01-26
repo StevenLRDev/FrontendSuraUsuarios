@@ -1,0 +1,9 @@
+:root {
+  --sura-azul-profundo: #001E60;
+  --sura-aqua: #05C3DE;
+  --sura-blanco: #FFFFFF;
+  --sura-gris-oscuro: #484949;
+  --sura-gris-claro: #DAE0E8;
+  --sura-texto-principal: var(--sura-gris-oscuro);
+  --sura-texto-secundario: #666666;
+}

@@ -1,0 +1,67 @@
+.usuario-lista {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.usuario-lista h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: var(--sura-azul-profundo);
+}
+
+.usuario-cuadricula {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.usuario-carta {
+  background: var(--sura-blanco);
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: animacion 0.6s ease;
+}
+
+.usuario-carta:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.usuario-carta h3 {
+  margin: 0 0 10px;
+  color: var(--sura-azul-profundo);
+}
+
+.usuario-carta p {
+  margin: 4px 0;
+  color: var(--sura-texto-principal);
+  font-size: 14px;
+}
+
+.boton-eliminar {
+  margin-top: 12px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--sura-aqua);
+  color: var(--sura-azul-profundo);
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.boton-eliminar:hover {
+  background: var(--sura-azul-profundo);
+  color: var(--sura-blanco);
+}
+
+@keyframes animacion {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
