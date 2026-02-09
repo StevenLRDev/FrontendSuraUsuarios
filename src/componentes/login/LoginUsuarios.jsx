@@ -12,14 +12,14 @@ function LoginUsuarios() {
 
   const navegacion = useNavigate();
 
-  const handleChange = (e) => {
+  const capturarDatos = (e) => {
     setLogin({
       ...login,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async (e) => {
+  const envioDatos = async (e) => {
     e.preventDefault();
 
     if (!login.correo || !login.contraseña) {
@@ -33,40 +33,44 @@ function LoginUsuarios() {
 
     try {
       const respuesta = await fetch(
-        "http://localhost:8080/autenticacion/login",
+        "http://localhost:8080/apisura8/v1/usuarios",
         {
-          method: "POST",
+          method: "GET",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            correo: login.correo,
-            contraseña: login.contraseña,
-          }),
         },
       );
 
-      const dato = await respuesta.json();
-
       if (!respuesta.ok) {
-        const mensaje = dato.mensaje
-          ? dato.mensaje
-          : Object.values(dato).join("\n");
+        throw new Error("Error al conectar con el servidor");
+      }
 
+      const usuarios = await respuesta.json();
+
+      const usuarioEncontrado = usuarios.find(
+        (usuario) =>
+          usuario.correo === login.correo &&
+          usuario.contraseña === login.contraseña,
+      );
+
+      if (!usuarioEncontrado) {
         Swal.fire({
           icon: "error",
           title: "Error",
-          text: mensaje,
+          text: "Correo o contraseña incorrectos",
         });
         return;
       }
 
-      localStorage.setItem("usuario", JSON.stringify(dato));
+      localStorage.setItem("usuario", JSON.stringify(usuarioEncontrado));
 
       Swal.fire({
         icon: "success",
         title: "Bienvenido",
-        text: `Hola ${dato.nombre}`,
+        text: `Hola ${usuarioEncontrado.nombre}`,
         timer: 1500,
         showConfirmButton: false,
+        allowOutsideClick: false,
+        scrollbarPadding: false,
       });
 
       navegacion("/home");
@@ -83,21 +87,21 @@ function LoginUsuarios() {
   return (
     <div className="contenedor-login">
       <img src={logoSura} alt="Logo Sura" className="logo-sura-login" />
-      <form className="login-formulario" onSubmit={handleSubmit}>
+      <form className="login-formulario" onSubmit={envioDatos}>
         <h2>Iniciar sesión</h2>
 
         <input
           type="text"
           name="correo"
           placeholder="Correo"
-          onChange={handleChange}
+          onChange={capturarDatos}
         />
 
         <input
           type="password"
           name="contraseña"
           placeholder="Contraseña"
-          onChange={handleChange}
+          onChange={capturarDatos}
         />
 
         <button type="submit">Entrar</button>

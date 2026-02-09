@@ -1,63 +1,32 @@
 import { useEffect, useState } from "react";
 import "./ListaUsuarios.css";
-import Swal from "sweetalert2";
 
 function UsuarioLista() {
   const [usuarios, setUsuarios] = useState([]);
-  const usuarioLogueado = JSON.parse(localStorage.getItem("usuario"));
+  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8080/usuarios")
+    fetch("http://localhost:8080/apisura8/v1/usuarios")
       .then((res) => res.json())
       .then((data) => setUsuarios(data))
       .catch((err) => console.error(err));
   }, []);
 
-  const eliminarUsuario = (id) => {
-    if (usuarioLogueado.rol !== "ADMIN") {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "No tienes permisos para eliminar usuarios",
+  const verDetalle = (id) => {
+    fetch(`http://localhost:8080/apisura8/v1/usuarios/${id}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Usuario no encontrado");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setUsuarioSeleccionado(data);
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("No se pudo cargar el usuario");
       });
-      return;
-    }
-
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "¡No podrás revertir esto!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#05C3DE",
-      cancelButtonColor: "#001E60",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        fetch(`http://localhost:8080/usuarios/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            "rol-usuario": usuarioLogueado.rol,
-          },
-        })
-          .then(async (res) => {
-            if (!res.ok) {
-              const msg = await res.text();
-              throw new Error(msg);
-            }
-            setUsuarios(usuarios.filter((u) => u.id !== id));
-            Swal.fire(
-              "Eliminado",
-              "El usuario ha sido eliminado correctamente.",
-              "success",
-            );
-          })
-          .catch((err) => {
-            Swal.fire("Error", err.message, "error");
-          });
-      }
-    });
   };
 
   return (
@@ -67,28 +36,27 @@ function UsuarioLista() {
       {usuarios.length === 0 && <p>No hay usuarios</p>}
 
       <div className="usuario-cuadricula">
-        {usuarios.map((u) => (
-          <div className="usuario-carta" key={u.id}>
-            <h3>{u.nombre}</h3>
-            <p>
-              <strong>Correo:</strong> {u.correo}
-            </p>
-            <p>
-              <strong>Rol:</strong> {u.rol}
-            </p>
-            <p>
-              <strong>Teléfono:</strong> {u.telefono}
-            </p>
+        {usuarios.map((usuario) => (
+          <div className="usuario-carta" key={usuario.id}>
+            <h3>{usuario.nombre}</h3>
+            <p><strong>Rol:</strong> {usuario.rol}</p>
 
-            <button
-              className="boton-eliminar"
-              onClick={() => eliminarUsuario(u.id)}
-            >
-              Eliminar
+            <button onClick={() => verDetalle(usuario.id)}>
+              Ver detalle
             </button>
           </div>
         ))}
       </div>
+
+      {usuarioSeleccionado && (
+        <div className="usuario-detalle">
+          <h3>Detalle del usuario</h3>
+          <p><strong>Nombre:</strong> {usuarioSeleccionado.nombre}</p>
+          <p><strong>Correo:</strong> {usuarioSeleccionado.correo}</p>
+          <p><strong>Rol:</strong> {usuarioSeleccionado.rol}</p>
+          <p><strong>Teléfono:</strong> {usuarioSeleccionado.telefono}</p>
+        </div>
+      )}
     </div>
   );
 }

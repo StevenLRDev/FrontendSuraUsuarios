@@ -12,7 +12,7 @@ function UsuarioFormulario() {
     telefono: "",
   });
 
-  const handleChange = (e) => {
+  const capturarDatos = (e) => {
     setUsuario({
       ...usuario,
       [e.target.name]: e.target.value,
@@ -29,7 +29,7 @@ function UsuarioFormulario() {
     return /^[0-9]{7,10}$/.test(telefono);
   };
 
-  const handleSubmit = async (e) => {
+  const envioDatos = async (e) => {
     e.preventDefault();
 
     if (
@@ -59,7 +59,7 @@ function UsuarioFormulario() {
 
     setError("");
 
-    const respuesta = await fetch("http://localhost:8080/usuarios", {
+    const respuesta = await fetch("http://localhost:8080/apisura8/v1/usuarios", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -67,13 +67,12 @@ function UsuarioFormulario() {
       body: JSON.stringify(usuario),
     });
 
-    const dato = await respuesta.json();
-
     if (!respuesta.ok) {
+      const mensajeError = await respuesta.text();
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: dato.mensaje || "Usuario ya registrado",
+        text: mensajeError || "No se pudo crear el usuario",
       });
       return;
     }
@@ -99,37 +98,39 @@ function UsuarioFormulario() {
     <div className="contenedor-formulario">
       <img src={logoSura} alt="Logo Sura" className="logo-sura-formulario" />
 
-      <form onSubmit={handleSubmit} className="usuario-formulario">
+      <form onSubmit={envioDatos} className="usuario-formulario">
         <input
           type="text"
           name="nombre"
           placeholder="Nombre"
-          onChange={handleChange}
+          value={usuario.nombre}
+          onChange={capturarDatos}
         />
         <input
           type="text"
           name="correo"
           placeholder="Correo"
-          onChange={handleChange}
+          value={usuario.correo}
+          onChange={capturarDatos}
         />
         <input
           type="password"
           name="contraseña"
           placeholder="Contraseña"
-          onChange={handleChange}
+          value={usuario.contraseña}
+          onChange={capturarDatos}
         />
-        <select name="rol" onChange={handleChange} defaultValue="">
-          <option value="" disabled>
-            Selecciona un rol
-          </option>
-          <option value="ADMIN">ADMIN</option>
-          <option value="USUARIO">USUARIO</option>
+        <select name="rol" value={usuario.rol} onChange={capturarDatos}>
+          <option value="">Selecciona un rol</option>
+          <option value="Profesor">PROFESOR</option>
+          <option value="Estudiante">ESTUDIANTE</option>
         </select>
         <input
           type="text"
           name="telefono"
           placeholder="Teléfono"
-          onChange={handleChange}
+          value={usuario.telefono}
+          onChange={capturarDatos}
         />
 
         {error && <p className="error-mensaje">{error}</p>}

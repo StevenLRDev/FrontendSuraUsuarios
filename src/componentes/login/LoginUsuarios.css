@@ -2,9 +2,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100dvh; 
   gap: 50px; 
   padding: 20px;
+  box-sizing: border-box;
 }
 
 .logo-sura-login {
