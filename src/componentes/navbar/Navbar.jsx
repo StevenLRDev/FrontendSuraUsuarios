@@ -25,8 +25,7 @@ function Navbar() {
         <img src={logoSura} alt="Logo Sura" className="logo-sura-navbar" />
         <h3>Hola, {usuario?.nombre} 👋</h3>
       </div>
-
-      {/* Solo el menú */}
+      
       <div className="acciones-derecha">
         <div className="contenedor-menu">
           <button
